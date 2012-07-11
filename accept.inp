@@ -1,0 +1,734 @@
+{+ file: accept.inp +}
+{+ directory: nmr_calc +}
+{+ description: determine accepted structures and generate  
+                ensemble averages +}
+{+ authors: Gregory Warren, Michael Nilges, Axel Brunger +}
+{+ copyright: Yale University +}
+
+{- Guidelines for using this file:
+   - all strings must be quoted by double-quotes
+   - logical variables (true/false) are not quoted
+   - do not remove any evaluate statements from the file -}
+
+{- begin block parameter definition -} define(
+
+{======================= molecular structure =========================}
+
+{* parameter file(s) *}
+{===>} par.1="CNS_TOPPAR:protein-allhdg5-4.param";
+{===>} par.2="";
+{===>} par.3="";
+{===>} par.4="";
+{===>} par.5="";
+
+{* structure file(s) *}
+{===>} struct.1="trx.mtf";
+{===>} struct.2="";
+{===>} struct.3="";
+{===>} struct.4="";
+{===>} struct.5="";
+
+{* input reference coordinate file *}
+{===>} pdb.in.file.1="";
+
+{========================== atom selection ===========================}
+
+{* input "backbone" selection criteria for average structure generation *}
+{* for protein      (name n or name ca or name c)
+   for nucleic acid (name O5' or name C5' or name C4' or name C3' 
+                     or name O3' or name P) *}
+{===>} pdb.atom.select=(name n or name ca or name c);
+
+{================== average and print selections =====================}
+
+{* Select whether the average will be generated from either trial or 	
+   accepted structures and whether to print accepted structures. If
+   the input coor and output coor names are different then the 
+   printing format is as follows: output coor = pdb.out.name + _#.pdb 
+   otherwise output coor = pdb.out.name + _#.pdb
+   accepted = pdb.out.name + a_#.pdb *} 
+
+{* number of structures in the ensemble *}
+{===>} pdb.end.count=5;
+
+{* print accepted structures *}
+{+ choice: true false +}
+{===>} flg.print.accept=true;
+
+{* Select to calculate an average structure for either the trial or 	
+   accepted structures. *}
+
+{* calculate average values for the ensemble? *}
+{+ choice: true false +}
+{===>} flg.calc.ave.struct=true;
+
+{* calculate an average for the accepted structures? If calculate an 
+   average for accepted is false then an average for the trial 
+   ensemble will be calculated. *}
+{+ choice: true false +}
+{===>} flg.calc.ave.accpt=true;
+
+{* calculate average coordinates for the accepted structures? 
+   False will print the average values to a text file *}
+{+ choice: true false +}
+{===>} flg.calc.coor.accpt=true;
+
+{* minimize average coordinate? *}
+{+ choice: true false +}
+{===>} flg.min.ave.coor=true;
+
+{* calculate a pairwise rmsd? *}
+{+ choice: true false +}
+{===>} flg.calc.ave.pair=true;
+
+{* generate a rms difference plot table on a per residue basis? *}
+{+ choice: true false +}
+{===>} flg.plot.rms=true;
+
+{====================== acceptance selections =========================}
+{* Input acceptance criteria.  All selections containing negative 
+   values will be ignored, except for total energy and vdw energy. *}
+
+{* select using total energy? *}
+{+ choice: true false +}
+{===>} nmr.ener.flag=false;
+{* total energy cutoff value *}
+{===>} nmr.ener.val=0;
+
+{* select using bonds? *}
+{+ choice: true false +}
+{===>} nmr.bond.flag=true;
+{* rmsd cutoff *}
+{===>} nmr.bond.rms=0.01;
+{* cutoff value *}
+{===>} nmr.bond.cut=0.05;
+{* number of violations *}
+{===>} nmr.bond.viol=-1;
+
+{* select using angles? *}
+{+ choice: true false +}
+{===>} nmr.angl.flag=true;
+{* rmsd cutoff *}
+{===>} nmr.angl.rms=1.0;
+{* cutoff value *}
+{===>} nmr.angl.cut=5.0;
+{* number of violations *}
+{===>} nmr.angl.viol=-1;
+
+{* select using impropers? *}
+{+ choice: true false +}
+{===>} nmr.impr.flag=false;
+{* rmsd cutoff *}
+{===>} nmr.impr.rms=1.0;
+{* cutoff value *}
+{===>} nmr.impr.cut=5.0;
+{* number of violations *}
+{===>} nmr.impr.viol=-1;
+
+{* select using dihedrals? *}
+{+ choice: true false +}
+{===>} nmr.dihe.flag=false;
+{* rmsd cutoff *}
+{===>} nmr.dihe.rms=1.0;
+{* cutoff value *}
+{===>} nmr.dihe.cut=30.0;
+{* number of violations *}
+{===>} nmr.dihe.viol=-1;
+
+{* select using vdw? *}
+{+ choice: true false +}
+{===>} nmr.vdw.flag=false;
+{* calculate vdw using repel or LJ? *}
+{+ choice: "repel" "LJ" +}
+{===>} nmr.vdw.repel="repel";
+{* energy value *}
+{===>} nmr.vdw.ener=0;
+{* cutoff value *}
+{===>} nmr.vdw.cut=1.6;
+{* number of violations *}
+{===>} nmr.vdw.viol=-1;
+
+{* select using noes? *}
+{+ choice: true false +}
+{===>} nmr.noe.flag=true;
+{* rmsd cutoff *}
+{===>} nmr.noe.rms=-1;
+{* cutoff value *}
+{===>} nmr.noe.cut=0.5;
+{* number of violations *}
+{===>} nmr.noe.viol=0;
+
+{* select using 3-bond homonuclear j-coupling? *}
+{+ choice: true false +}
+{===>} nmr.jcoup.flag=false;
+{* rmsd cutoff *}
+{===>} nmr.jcoup.rms=-1;
+{* cutoff value *}
+{===>} nmr.jcoup.cut=1.0;
+{* number of violations *}
+{===>} nmr.jcoup.viol=0;
+
+{* select using 1-bond heteronuclear j-coupling? *}
+{+ choice: true false +}
+{===>} nmr.oneb.flag=false;
+{* rmsd cutoff *}
+{===>} nmr.oneb.rms=-1;
+{* cutoff value *}
+{===>} nmr.oneb.cut=1.0;
+{* number of violations *}
+{===>} nmr.oneb.viol=-1;
+
+{* select using alpha and beta carbon chemical shifts? *}
+{+ choice: true false +}
+{===>} nmr.carb.flag=false;
+{* rmsd cutoff for alpha *}
+{===>} nmr.carb.rms.a=-1;
+{* rmsd cutoff for beta *}
+{===>} nmr.carb.rms.b=-1;
+{* cutoff value *}
+{===>} nmr.carb.cut=1.0;
+{* number of violations *}
+{===>} nmr.carb.viol=0;
+
+{* select using proton chemical shifts? *}
+{+ choice: true false +}
+{===>} nmr.prot.flag=false;
+{* rmsd cutoff *}
+{===>} nmr.prot.rms=-1;
+{* cutoff value *}
+{===>} nmr.prot.cut=0.3;
+{* number of violations *}
+{===>} nmr.prot.viol=-1;
+
+{* select using diffusion anisotropy restraints *}
+{+ choice: true false +}
+{===>} nmr.dani.flag=false;
+{* rmsd cutoff *}
+{===>} nmr.dani.rms=-1;
+{* cutoff value *}
+{===>} nmr.dani.cut=1.0;
+{* number of violations *}
+{===>} nmr.dani.viol=-1;
+
+{* select using susceptibility anisotropy restraints *}
+{+ choice: true false +}
+{===>} nmr.sani.flag=false;
+{* rmsd cutoff *}
+{===>} nmr.sani.rms=-1;
+{* cutoff value *}
+{===>} nmr.sani.cut=1.0;
+{* number of violations *}
+{===>} nmr.sani.viol=-1;
+
+{* select using dihedral angle restraints? *}
+{+ choice: true false +}
+{===>} nmr.cdih.flag=true;
+{* rmsd cutoff *}
+{===>} nmr.cdih.rms=-1;
+{* cutoff value *}
+{===>} nmr.cdih.cut=5.0;
+{* number of violations *}
+{===>} nmr.cdih.viol=5;
+
+{* select using planarity restraints? *}
+{+ choice: true false +}
+{===>} nmr.plan.flag=false;
+{* energy value *}
+{===>} nmr.plan.ener=-1;
+{* x rot cutoff *}
+{===>} nmr.plan.x=-1;
+{* y rot cutoff *}
+{===>} nmr.plan.y=-1;
+{* z rot cutoff *}
+{===>} nmr.plan.z=-1;
+
+{* select using NCS restraints? *}
+{+ choice: true false +}
+{===>} nmr.ncs.flag=false;
+{* energy value *}
+{===>} nmr.ncs.ener=-1;
+
+{============================= noe data ===============================}
+
+{- Important - if you do not have a particular data set then
+   set the file name to null ("") -}
+
+{* NOE distance restraints files. *}
+
+{* restraint set 1 file *}
+{===>} nmr.noe.file.1="trx_noe_all.tbl";
+{* restraint set 2 file *}
+{===>} nmr.noe.file.2="";
+{* restraint set 3 file *}
+{===>} nmr.noe.file.3="";
+{* restraint set 4 file *}
+{===>} nmr.noe.file.4="";
+{* restraint set 5 file *}
+{===>} nmr.noe.file.5="";
+
+{* NOE averaging modes *}
+
+{* restraint set 1 *}
+{+ choice: "sum" "cent" "R-6" "R-3" "symm" +}
+{===>} nmr.noe.ave.mode.1="sum";
+{* restraint set 2 *}
+{+ choice: "sum" "cent" "R-6" "R-3" "symm" +}
+{===>} nmr.noe.ave.mode.2="sum";
+{* restraint set 3 *}
+{+ choice: "sum" "cent" "R-6" "R-3" "symm" +}
+{===>} nmr.noe.ave.mode.3="R-6";
+{* restraint set 4 *}
+{+ choice: "sum" "cent" "R-6" "R-3" "symm" +}
+{===>} nmr.noe.ave.mode.4="sum";
+{* restraint set 5 *}
+{+ choice: "sum" "cent" "R-6" "R-3" "symm" +}
+{===>} nmr.noe.ave.mode.5="sum";
+
+{* noe force value *}
+{===>} nmr.noe.force=75;
+
+{======================== hydrogen bond data ==========================}
+
+{* hydrogen-bond distance restraints file. *}
+{===>} nmr.noe.hbnd.file="trx_noe_hbond.tbl";
+
+{* enter hydrogen-bond distance averaging mode *}
+{+ choice: "sum" "cent" "R-6" "R-3" "symm" +}
+{===>} nmr.noe.ave.mode.hbnd="sum";
+
+{======================= 3-bond J-coupling data =======================}
+{* the default setup is for the phi dihedral *}
+
+{* Class 1 *}
+
+{* 3-bond J-coupling non-glycine restraints file *}
+{===>} nmr.jcoup.file.1="";
+{* 3-bond J-coupling non-glycine potential *}
+{+ choice: "harmonic" "square" "multiple" +}
+{===>} nmr.jcoup.pot.1="harmonic";
+{* 3-bond J-coupling non-glycine force value *}
+{===>} nmr.jcoup.force.1.1=1;
+{* 3-bond j-coupling multiple class force second value *}
+{===>} nmr.jcoup.force.2.1=0;
+{* 3-bond j-coupling Karplus coefficients *}
+{* the default values are for phi *}
+{===>} nmr.jcoup.coef.1.1=6.98;
+{===>} nmr.jcoup.coef.2.1=-1.38;
+{===>} nmr.jcoup.coef.3.1=1.72;
+{===>} nmr.jcoup.coef.4.1=-60.0;
+
+{* Class 2 *}
+
+{* 3-bond j-coupling glycine restraints files *}
+{* The potential for the glycine class must be multiple *}
+{===>} nmr.jcoup.file.2="";
+{* 3-bond J-coupling non-glycine potential *}
+{+ choice: "harmonic" "square" "multiple" +}
+{===>} nmr.jcoup.pot.2="multiple";
+{* 3-bond J-coupling first force value *}
+{===>} nmr.jcoup.force.1.2=1;
+{* 3-bond j-coupling glycine or multiple force second value *}
+{===>} nmr.jcoup.force.2.2=0;
+{* 3-bond j-coupling Karplus coefficients *}
+{* the default values are for glycine phi *}
+{===>} nmr.jcoup.coef.1.2=6.98;
+{===>} nmr.jcoup.coef.2.2=-1.38;
+{===>} nmr.jcoup.coef.3.2=1.72;
+{===>} nmr.jcoup.coef.4.2=0.0;
+
+{================ 1-bond heteronuclear J-coupling data ================}
+
+{* Class 1 *}
+
+{* 1-bond heteronuclear j-coupling file *}
+{===>} nmr.oneb.file.1="";
+{* 1-bond heteronuclear j-coupling potential *}
+{+ choice: "harmonic" "square" +}
+{===>} nmr.oneb.pot.1="harmonic";
+{* 1-bond heteronuclear j-coupling force value *}
+{===>} nmr.oneb.force.1=1.0;
+
+{=============== alpha/beta carbon chemical shift data ================}
+
+{* Class 1 *}
+
+{* carbon, alpha and beta, chemical shift restraints file *}
+{===>} nmr.carb.file.1="";
+{* carbon, alpha and beta, chemical shift restraint potential *}
+{+ choice: "harmonic" "square" +}
+{===>} nmr.carb.pot.1="harmonic";
+{* carbon, alpha and beta, chemical shift restraint force value *}
+{===>} nmr.carb.force.1=0.5;
+
+{===================== proton chemical shift data =====================}
+
+{* Class 1 *}
+
+{* class 1 proton chemical shift restraints file *}
+{===>} nmr.prot.file.1="";
+{* class 1 proton chemical shift potential *}
+{+ choice: "harmonic" "square" "multiple" +}
+{===>} nmr.prot.pot.1="harmonic";
+{* class 1 proton chemical shift force value *}
+{===>} nmr.prot.force.1.1=7.5;
+{* 2nd class 1 proton chemical shift force value for multi *}
+{===>} nmr.prot.force.2.1=0;
+{* class 1 proton chemical shift violation cutoff threshold *}
+{===>} nmr.prot.thresh.1=0.3;
+
+{* Class 2 *}
+
+{* class 2 proton chemical shift restraints file *}
+{===>} nmr.prot.file.2="";
+{* class 2 proton chemical shift potential *}
+{+ choice: "harmonic" "square" "multiple" +}
+{===>} nmr.prot.pot.2="harmonic";
+{* class 2 proton chemical shift force value *}
+{===>} nmr.prot.force.1.2=7.5;
+{* 2nd class 2 proton chemical shift force value for multi *}
+{===>} nmr.prot.force.2.2=0;
+{* class 2 proton chemical shift violation cutoff threshold *}
+{===>} nmr.prot.thresh.2=0.3;
+
+{* Class 3 *}
+
+{* class 3 proton chemical shift restraints file *}
+{===>} nmr.prot.file.3="";
+{* class 3 proton chemical shift potential *}
+{+ choice: "harmonic" "square" "multiple" +}
+{===>} nmr.prot.pot.3="harmonic";
+{* class 3 proton chemical shift force value *}
+{===>} nmr.prot.force.1.3=7.5;
+{* 2nd class 3 proton chemical shift force value for multi *}
+{===>} nmr.prot.force.2.3=0;
+{* class 3 proton chemical shift violation cutoff threshold *}
+{===>} nmr.prot.thresh.3=0.3;
+
+{* Class 4 *}
+
+{* class 4 proton chemical shift restraints file *}
+{===>} nmr.prot.file.4="";
+{* class 4 proton chemical shift potential *}
+{+ choice: "harmonic" "square" "multiple" +}
+{===>} nmr.prot.pot.4="multiple";
+{* class 4 proton chemical shift force value *}
+{===>} nmr.prot.force.1.4=7.5;
+{* 2nd class 4 proton chemical shift force value for multi *}
+{===>} nmr.prot.force.2.4=0;
+{* class 4 proton chemical shift violation cutoff threshold *}
+{===>} nmr.prot.thresh.4=0.3;
+
+{================ diffusion anisotropy restraint data =================}
+
+{* fixed or harmonically restrained external axis *}
+{+ choice: "fixed" "harm" +}
+{===>} nmr.dani.axis="harm";
+
+{* Class 1 *}
+
+{* diffusion anisotropy restraints file *}
+{===>} nmr.dani.file.1="";
+{* diffusion anisotropy potential *}
+{+ choice: "harmonic" "square" +}
+{===>} nmr.dani.pot.1="harmonic";
+{* diffusion anisotropy initial force value *}
+{===>} nmr.dani.force.init.1=0.01;
+{* diffusion anisotropy final force value *}
+{===>} nmr.dani.force.finl.1=1.0;
+{* diffusion anisotropy coefficients *}
+{* coef: <Tc> <anis> <rhombicity> <wh> <wn> *}
+
+{* Tc = 1/2(Dx+Dy+Dz) in <ns> *} 
+{===>} nmr.dani.coef.1.1=13.1;
+{* anis = Dz/0.5*(Dx+Dy) *} 
+{===>} nmr.dani.coef.2.1=2.1;
+{* rhombicity = 1.5*(Dy-Dx)/(Dz-0.5*(Dy+Dx)) *} 
+{===>} nmr.dani.coef.3.1=0.0;
+{* wH in <MHz> *} 
+{===>} nmr.dani.coef.4.1=600.13;
+{* wN in <MHz> *}
+{===>} nmr.dani.coef.5.1=60.82;
+
+{============= susceptability anisotropy restraint data ===============}
+
+{* fixed or harmonically restrained external axis *}
+{+ choice: "fixed" "harm" +}
+{===>} nmr.sani.axis="harm";
+
+{* Class 1 *}
+
+{* susceptability anisotropy restraints file *}
+{===>} nmr.sani.file.1="";
+{* susceptability anisotropy potential *}
+{+ choice: "harmonic" "square" +}
+{===>} nmr.sani.pot.1="harmonic";
+{* susceptability anisotropy initial force value *}
+{===>} nmr.sani.force.init.1=0.01;
+{* susceptability anisotropy final force value *}
+{===>} nmr.sani.force.finl.1=50.0;
+{* susceptability anisotropy coefficients *}
+{* coef: <DFS> <axial > <rhombicity>;
+   a0+a1*(3*cos(theta)^2-1)+a2*(3/2)*sin(theta)^2*cos(2*phi) *}
+
+{* DFS = a0 *}
+{===>} nmr.sani.coef.1.1=-0.0601;
+{* axial = a0-a1-3/2*a2 *}
+{===>} nmr.sani.coef.2.1=-8.02;
+{* rhombicity = a2/a1 *}
+{===>} nmr.sani.coef.3.1=0.4;
+
+{======================== other restraint data ========================}
+
+{* dihedral angle restraints file *}
+{* Note: the restraint file MUST NOT contain restraints 
+         dihedral or end *}
+{===>} nmr.cdih.file="trx_dihed_rama.tbl";
+{* dihedral angle restraints force value *}
+{===>} nmr.cdih.force=200;
+
+
+{* DNA-RNA base planarity restraints file *}
+{* Note: include weights as $pscale in the restraint file *}
+{===>} nmr.plan.file="";
+{* input planarity scale factor - this will be written into $pscale *}
+{===>} nmr.plan.scale=150;
+
+{* NCS-restraints file *}
+{* example is in inputs/xtal_data/eg1_ncs_restrain.dat *}
+{===>} nmr.ncs.file="";
+
+{======================== input/output files ==========================}
+
+{* base name for input coordinate file(s) *}
+{===>} pdb.in.name="trx_anneal";
+
+{* base name for output coordinate file(s) *}
+{===>} pdb.out.name="trx_accept";
+
+{===========================================================================}
+{         things below this line do not normally need to be changed         }
+{         except for the torsion angle topology setup if you have           }
+{         molecules other than protein or nucleic acid                      }
+{===========================================================================}
+
+ ) {- end block parameter definition -}
+
+checkversion 1.3
+
+evaluate ($log_level=quiet)
+
+structure 
+   if  (&struct.1 # "") then
+      @@&struct.1 
+   end if
+   if  (&struct.2 # "") then
+      @@&struct.2 
+   end if
+   if  (&struct.3 # "") then
+      @@&struct.3 
+   end if
+   if  (&struct.4 # "") then
+      @@&struct.4 
+   end if
+   if  (&struct.5 # "") then
+      @@&struct.5 
+   end if
+end
+
+if (&pdb.in.file.1 # "") then
+   coor @@&pdb.in.file.1
+else
+   evaluate ($temp_file = &pdb.in.name+"_1.pdb")
+   coor @@$temp_file
+end if
+
+
+parameter
+   if (&par.1 # "") then
+      @@&par.1
+   end if
+   if (&par.2 # "") then
+      @@&par.2
+   end if
+   if (&par.3 # "") then
+      @@&par.3
+   end if
+   if (&par.4 # "") then
+      @@&par.4
+   end if
+   if (&par.5 # "") then
+      @@&par.5
+   end if
+end
+
+if ( $log_level = verbose ) then
+  set message=normal echo=on end
+else
+  set message=off echo=off end
+end if
+
+{- Read experimental data -}
+
+   @CNS_NMRMODULE:readdata ( nmr=&nmr;
+                             flag=&flg;
+                             output=$nmr; )
+
+{- Read and store the number of NMR restraints -}
+
+   @CNS_NMRMODULE:restraintnumber ( num=$num; )
+   
+{- Set mass values -}
+   
+do (fbeta=10) (all)
+do (mass=100) (all)
+
+
+evaluate ($nmr.trial.count = 0)    {- Initialize current structure number   -}
+evaluate ($nmr.accept.count = 0)   {- Initialize number accepted            -}
+evaluate ($nmr.counter 	= 0)
+
+@CNS_NMRMODULE:acceptinit  ( ave=$ave;            
+                             ave2=$ave2;
+                             ener1=$ener1;
+                             ener2=$ener2;
+                             flag=&flg;
+                             nmr=&nmr; )
+        
+{- Count the number of residues and determine molecule type -}
+identify (store9) (tag)
+evaluate ($nmr.rsn.num = $SELECT)
+identify (store9) ( tag and ( resn THY or resn CYT or resn GUA or
+                              resn ADE or resn URI ))
+evaluate ($nmr.nucl.num = $SELECT)    
+
+if (&nmr.dani.axis = "harm") then
+   do (harmonic=20.0) (resid 500 and name OO)
+   do (harmonic=0.0) (resid 500 and name Z )
+   do (harmonic=0.0) (resid 500 and name X )
+   do (harmonic=0.0) (resid 500 and name Y )
+   do (harmonic=0.0) (not (resid 500))
+   restraints harmonic exponent=2 end
+elseif (&nmr.sani.axis = "harm") then
+   do (harmonic=20.0) (resid 500 and name OO)
+   do (harmonic=0.0) (resid 500 and name Z )
+   do (harmonic=0.0) (resid 500 and name X )
+   do (harmonic=0.0) (resid 500 and name Y )
+   do (harmonic=0.0) (not (resid 500))
+   restraints harmonic exponent=2 end
+end if
+
+{- scaling of nmr restraint data -}
+evaluate ($count = 1)
+while (&exist%nmr.dani.file.$count=true) loop nloop
+   evaluate ($clsname = "D"+encode($count))
+   if (&nmr.dani.file.$count # "" ) then
+      dani
+         class $$clsname force &nmr.dani.force.finl.$count
+      end
+   end if
+   evaluate ($count = $count + 1)
+end loop nloop
+
+evaluate ($count = 1)
+while (&exist%nmr.sani.file.$count=true) loop nloop
+   evaluate ($clsname = "S"+encode($count))
+   if (&nmr.sani.file.$count # "" ) then
+      sani
+         class $$clsname force &nmr.sani.force.finl.$count
+      end
+   end if
+   evaluate ($count = $count + 1)
+end loop nloop
+
+noe 
+   scale * &nmr.noe.force
+end
+             
+restraints dihedral
+   scale = &nmr.cdih.force
+end
+
+{- set reference coordinates -}
+if (&pdb.in.file.1 # "") then
+   do (refx=x) ( all )
+   do (refy=y) ( all )
+   do (refz=z) ( all )
+end if
+        
+{- Begin protocol to read in structures -- loop until done -}
+while (&pdb.end.count > $nmr.counter) loop main
+
+   evaluate ($nmr.trial.count = $nmr.trial.count + 1)
+   evaluate ($input_coor = &pdb.in.name+"_"+encode($nmr.trial.count)+".pdb")
+
+   set remarks=reset end 
+   coor @@$input_coor
+
+   if (&nmr.dani.axis = "fixed" ) then
+      fix
+         select=(resname ANI)
+      end
+   elseif (&nmr.sani.axis = "fixed" ) then
+      fix
+         select=(resname ANI)
+      end
+   end if
+
+   flags exclude * 
+         include bond angl dihe impr vdw elec
+                 noe coup oneb carb prot dani   
+                 sani cdih ncs plan harm end
+
+   if (&nmr.vdw.repel="repel") then
+      parameter
+         nbonds
+            repel=0.80
+            rexp=2 irexp=2 rcon=1.
+            nbxmod=3
+            wmin=&nmr.vdw.cut
+            cutnb=6.0 ctonnb=2.99 ctofnb=3.
+         end
+      end
+   else 
+      parameter 		      
+   	 nbonds
+   	    repel=0
+            nbxmod=5
+            wmin=&nmr.vdw.cut
+            tolerance=0.5
+   	    cutnb=11.5 ctonnb=9.5 ctofnb=10.5 
+   	    rdie vswitch switch
+   	 end
+      end
+   end if 
+
+   igroup interaction ( all ) ( all ) weights * 1 end end
+
+   @CNS_NMRMODULE:acceptprint ( ave=$ave;                 
+                                ave2=$ave2;               
+                                ener1=$ener1;               
+                                ener2=$ener2;             
+                                flag=&flg;               
+                                md=&md;
+                                nmr=&nmr;
+                                num=$num;                 
+                                output=$nmr;           
+                                pdb=&pdb; )
+
+end loop main
+
+   @CNS_NMRMODULE:acceptavecalc ( ave=$ave;
+                                  ave2=$ave2;
+                                  ener1=$ener1;
+                                  ener2=$ener2;
+                                  flag=&flg;
+                                  md=&md;
+                                  nmr=&nmr;
+                                  num=$num;
+   	                          output=$nmr;
+   	                          pdb=&pdb; )
+ 
+ 
+stop
+
+
