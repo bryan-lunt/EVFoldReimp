@@ -1,0 +1,28 @@
+Protein: noname
+Length:  266
+N-terminus: OUT 
+Number of transmembrane helices: 6
+Transmembrane helices: 27-51 72-88 109-131 150-172 193-213 247-263 
+
+Total entropy of the model:  17.0090
+Entropy of the best path:  17.0119
+
+The best path:
+
+     seq  MIKDITIGQY IPGNSFVHKL DPRVKIIISL IYIIDLFIVN NFKGYIFIVL    50
+     pred OOOOOOOOOO Oooooooooo ooooooHHHH HHHHHHHHHH HHHHHHHHHH 
+
+     seq  FTLAAILISQ IKFKYIYKGL KPILILVIIT AVLNLFLTPG DTLLFKWKFI   100
+     pred Hiiiiiiiii iiiiiiiiii iHHHHHHHHH HHHHHHHHoo oooooooooo 
+
+     seq  TIYKEGVRLA IFMVLRLVFL IIGTSLLTLT TSPIELTDGI EKLLNPLRKI   150
+     pred ooooooooHH HHHHHHHHHH HHHHHHHHHH Hiiiiiiiii iiiiiiiiiH 
+
+     seq  GVPAHELAMM MTIALRFIPT LMDETDKIMK AQMARGADFE SGNLIQRAKN   200
+     pred HHHHHHHHHH HHHHHHHHHH HHoooooooo oooooooooo ooHHHHHHHH 
+
+     seq  LIPLLVPLFI SSFRRADELA MAMEARCYRG GEGRTRMKEL SFSSRDFIAI   250
+     pred HHHHHHHHHH HHHiiiiiii iiiiiiiiII Iiiiiiiiii iiiiiiHHHH 
+
+     seq  AFTSILVILS IWSRMA  266
+     pred HHHHHHHHHH HHHooo
