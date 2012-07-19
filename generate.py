@@ -14,11 +14,16 @@ DI[:,0:2] += 1
 
 seq = Bio.SeqIO.read(INFILE,'fasta')
 
-outSeq = ' '.join([PP.one_to_three(i) for i in seq.seq.tostring()])
+seqStr = seq.seq.tostring()
+seqLen = len(seqStr)
+
+outSeq = [PP.one_to_three(i) for i in seqStr]
 
 OUTSEQ = open('my.seq','w')
-OUTSEQ.write(outSeq)
-OUTSEQ.write('\n')
+
+for i in range(seqLen/10):
+	OUTSEQ.write(' '.join(outSeq[i:i+10]))
+	OUTSEQ.write('\n')
 OUTSEQ.close()
 
 
@@ -40,9 +45,12 @@ for line in HMMTOPFILE:
 HMMTOPFILE.close()
 
 OUTSS = open('my_SS.tbl','w')
+OUTSSA = open('my_SS_angle.tbl','w')
 for Hstart, Hend in TMstr:
 	for i in range(Hstart,Hend+1):
 		if i+1 <= Hend:
+			OUTSSA.write('assign (resid %i and name c) (resid %i and name n) (resid %i and name ca) (resid %i and name c)  5.0 -57.0 7.0 2\n' % (i, i+1, i+1, i+1))
+			OUTSSA.write('assign (resid %i and name n) (resid %i and name ca) (resid %i and name c) (resid %i and name n)  5.0 -47.0 7.0 2\n' % (i,i,i,i+1))
 			OUTSS.write(constraintstr % (i, i+1, 3.82, 0.2, 0.2))
 		if i+2 <= Hend:
 			OUTSS.write(constraintstr % (i, i+2, 5.5, 0.3, 0.3))
@@ -53,3 +61,4 @@ for Hstart, Hend in TMstr:
 		if i+5 <= Hend:
 			OUTSS.write(constraintstr % (i, i+5, 8.7, 0.6, 0.6))
 OUTSS.close()
+OUTSSA.close()
