@@ -72,7 +72,7 @@
 {======================= molecular structure =========================}
 
 {* parameter file(s) *}
-{===>} par.1="CNS_TOPPAR:protein.param";
+{===>} par.1="CNS_TOPPAR:protein-allhdg5-4.param";
 {===>} par.2="";
 {===>} par.3="";
 {===>} par.4="";
@@ -106,7 +106,7 @@
 
 {* type of molecular dynamics for cool phase *}
 {+ choice: "torsion" "cartesian" +}
-{===>} md.type.cool="cartesian";
+{===>} md.type.cool="torsion";
 
 {* refine using different initial velocities or coordinates 
    (enter base name in "input coordinate files" field) *}
@@ -173,15 +173,15 @@
 {===>} md.cool.step=1000;
 {* scale factor for final van der Waals (repel) energy term 
    (cartesian: 4.0, torsion: 1.0) *}
-{===>} md.cool.vdw=4.0;
+{===>} md.cool.vdw=1.0;
 {* scale factor for NOE energy term *}
 {===>} md.cool.noe=150;
 {* scale factor for dihedral angle energy term *}
 {===>} md.cool.cdih=200;
 {* molecular dynamics timestep (cartesian: 0.005, torsion: 0.015) *}
-{===>} md.cool.ss=0.005;
+{===>} md.cool.ss=0.015;
 {* slow-cool annealing temperature step (cartesian: 25, torsion: 250) *}
-{===>} md.cool.tmpstp=25;
+{===>} md.cool.tmpstp=250;
 
 {========= parameters for a second slow-cool annealing stage ==========}
 
@@ -452,7 +452,7 @@
 {* dihedral angle restraints file *}
 {* Note: the restraint file MUST NOT contain restraints 
          dihedral or end *}
-{===>} nmr.cdih.file="";
+{===>} nmr.cdih.file="my_SS_angle.tbl";
 
 {* DNA-RNA base planarity restraints file *}
 {* Note: include weights as $pscale in the restraint file *}

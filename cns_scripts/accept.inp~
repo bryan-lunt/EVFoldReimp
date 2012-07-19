@@ -258,7 +258,7 @@
 {* restraint set 1 file *}
 {===>} nmr.noe.file.1="my.tbl";
 {* restraint set 2 file *}
-{===>} nmr.noe.file.2="";
+{===>} nmr.noe.file.2="my_SS.tbl";
 {* restraint set 3 file *}
 {===>} nmr.noe.file.3="";
 {* restraint set 4 file *}

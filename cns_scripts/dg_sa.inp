@@ -461,7 +461,7 @@
 {* dihedral angle restraints file *}
 {* Note: the restraint file MUST NOT contain restraints 
          dihedral or end *}
-{===>} nmr.cdih.file="";
+{===>} nmr.cdih.file="my_SS_angle.tbl";
 
 {* DNA-RNA base planarity restraints file *}
 {* Note: include weights as $pscale in the restraint file *}
