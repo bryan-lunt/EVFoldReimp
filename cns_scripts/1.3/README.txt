@@ -1,0 +1,3 @@
+These scripts are either taken directly from the CNS tutorial/manual, or are edited by Bryan Lunt for his EVFold reimplementation.
+
+They use the newer version of CNS, which may be a drawback...
