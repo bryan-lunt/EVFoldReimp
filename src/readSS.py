@@ -1,12 +1,25 @@
+"""
+This module contains functions to read different secondary structure file formats and bring them to one standardized representation.
+
+@author: blunt@cs.ucsd.edu
+
+"""
+
 import re
 
 
 def read_jnet(file):
+	"""
+	Read a file in the JNet column file format, converting it to a sequence.
+	"""
 	lines = [l for l in file][1:-1]
 	letters = ''.join([l[2] for l in lines])
 	return letters
 
 def read_hmmtop(file):
+	"""
+	Read the HMMTOP output, and convert that to a sequence.
+	"""
 	for line in HMMTOPFILE:
 		if line.startswith('Transmembrane helices'):
 			TMstr = map(lambda x: tuple(map(int,x.split('-')))+("H",), line.split(':')[1].strip().split(' '))

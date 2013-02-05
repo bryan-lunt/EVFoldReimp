@@ -2,8 +2,9 @@
 These functions and constants are for creating distance and dihedral constraints based on secondary structure for an EVFold reimplementaion.
 
 The original paper doesn't spell everything out, even in the supplementary material. Specifically, the dihedral angles had to be reverse engineered from the output files provided by the EVFold authors.
+Actually, there are places where the paper says there is something in supplementary material, and it isn't even there.
 
-@author: lunt@ctbp.ucsd.edu
+@author: blunt@cs.ucsd.edu
 
 
 
@@ -83,4 +84,5 @@ def make_SS_angles(start,length,type="H",weight=2.0):
 	return retstr
 
 if __name__ == "__main__":
+	pass
 	#TODO : Put some unit tests here.
