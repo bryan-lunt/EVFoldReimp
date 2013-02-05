@@ -1,6 +1,6 @@
 prep:
 	jnet -z foo.faa > foo.ss
-	python generate.py foo.faa DIs/long_200.DI foo.ss
+	python generate.py foo.faa foo.DI foo.ss
 	cns_solve < cns_scripts/generate_seq.inp > cns_output/generate_seq.out
 	cns_solve < cns_scripts/generate_extended.inp > cns_output/generate_extended.out
 

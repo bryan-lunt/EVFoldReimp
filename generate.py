@@ -47,8 +47,13 @@ OUTSS = open('my_SS.tbl','w')
 OUTSSA = open('my_SS_angle.tbl','w')
 
 for Hstart, Hend, type in SS_map:
-	thisTM_dists = make_SS_dists(Hstart+1,Hend-Hstart+1)
-	thisDihedral = make_helix_dihedral(Hstart+1,Hend-Hstart+1)
+	thisTM_dists = make_SS_dists(Hstart+1,Hend-Hstart+1,type=type)
+	if type is 'H':
+		thisDihedral = make_helix_dihedral(Hstart+1,Hend-Hstart+1)
+	elif type is 'E':
+		thisDihedral = make_strand_dihedral(Hstart+1,Hend-Hstart+1)
+	else:
+		thisDihedral = ''
 
 	OUTSS.write(thisTM_dists)
 	OUTSSA.write(thisDihedral)
@@ -58,8 +63,10 @@ OUTSSA.close()
 
 #use SS map to mask DI constraints
 for start, end, type in SS_map:
-	if type in ['E','H']:
-		DI_Matrix[start:end,start:end] = 0.0
+	if type is 'H':
+		DI_Matrix[max(start-3,1):min(end+1,seqLen),max(start-3,1):min(end+1,seqLen)] = 0.0
+	if type is 'E':
+		DI_Matrix[max(start-4,1):min(end+2,seqLen),max(start-4,1):min(end+2,seqLen)] = 0.0
 
 nonZ = DI_Matrix.nonzero()
 DIs = DI_Matrix[nonZ]
@@ -69,6 +76,6 @@ constraintstr = 'assign (resid %i and name CA)  (resid %i and name CA)  %.1f %.1
 
 OUTCONS = open('my.tbl','w')
 for i,j,k,number in izip(nonZ[0],nonZ[1],DIs,count(1)):
-	OUTCONS.write(constraintstr % (i+1,j+1, 7.0, 4.0, 3.0,10.0/number))
+	OUTCONS.write(constraintstr % (i+1,j+1, 4.0, 4.0, 3.0,10.0/number))
 OUTCONS.close()
 

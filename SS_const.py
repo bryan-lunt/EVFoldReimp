@@ -1,4 +1,4 @@
-constraintstr = 'assign (resid {0} and name {2:s})  (resid {1} and name {3:s})  {4:.1f} {5:.1f} {6:.1f} weight {7:.5f}\n'
+SSDistanceStr = 'assign (resid {0} and name {2:s})  (resid {1} and name {3:s})  {4:.1f} {5:.1f} {6:.1f} weight {7:.5f}\n'
 
 helixConstraints = [
 	[('O','O', 3.07, 0.2, 0.2),	('N','N',2.82, 0.2, 0.2),				('CA','CA',3.82,0.2,0.2),	('CA','O', 4.45, 0.2, 0.2),	('CB','CB',3.6,0.4,0.4)],
@@ -21,7 +21,9 @@ strandConstraints = [
 	[('O','O',20.5,4.0,4.0),	('N','N',20.5,4.0,4.0),		('O','N',18.6,3.6,3.6),	('CA','CA',20.5,4.1,4.1),	('CA','O',21.3,4.2,4.2),	('CB','CB',20.6,4.1,4.1)]
 ]
 
-secondaryDict = {'H':helixConstraints,'E':strandConstraints}
+loopConstraints = []
+
+secondaryDict = {'H':helixConstraints,'E':strandConstraints,'C':loopConstraints}
 
 def make_SS_dists(start,length,type='H',weight=5.0):
 	end = start+length
@@ -33,12 +35,12 @@ def make_SS_dists(start,length,type='H',weight=5.0):
 	for i in range(start,end):
 		for j,offset in zip(range(i+1,end),range(len(SS_constraints))):
 			for single in SS_constraints[offset]:
-				retstr += constraintstr.format(*((i,j) + single + (weight,)))
+				retstr += SSDistanceStr.format(*((i,j) + single + (weight,)))
 	
 	return retstr
 
 
-dihedralStr = """assign (resid {0} and name c) (resid {1} and name n) (resid {1} and name ca) (resid {1} and name c)  5.0 -57.0 7.0 2
+AlphaDihedralStr = """assign (resid {0} and name c) (resid {1} and name n) (resid {1} and name ca) (resid {1} and name c)  5.0 -57.0 7.0 2
 assign (resid {0} and name n) (resid {0} and name ca) (resid {0} and name c) (resid {1} and name n)  5.0 -47.0 7.0 2
 """
 
@@ -46,8 +48,20 @@ def make_helix_dihedral(start,length):
 	retstr = ""
 
 	for i in range(start,start+length):
-		retstr += dihedralStr.format(i,i+1)
+		retstr += AlphaDihedralStr.format(i,i+1)
+	return retstr
+
+BetaDihedralStr = """assign (resid {0} and name c) (resid {1} and name n) (resid {1} and name ca) (resid {1} and name c)  5.0 -120.0 7.0 2
+assign (resid {0} and name n) (resid {0} and name ca) (resid {0} and name c) (resid {1} and name n)  5.0 120.0 7.0 2
+"""
+
+def make_strand_dihedral(start,length):
+	retstr = ""
+
+	for i in range(start,start+length):
+		retstr += BetaDihedralStr.format(i,i+1)
 	return retstr
 
 if __name__ == "__main__":
+	#TODO : Put some unit tests here.
 	print make_helix_dihedral(1,5)

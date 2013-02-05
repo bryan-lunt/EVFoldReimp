@@ -34,8 +34,24 @@ def make_ranges(SS_string,index=0):
 	return regions
 
 if __name__ == '__main__':
+	#Perform some Unit Tests
 	foo = '-----EEEEE-----EEEE----EEEEHHHHHHHHHHH------EEEEHHHHHHHHHHHHHHHHHHHH----EEEEEEHHHHHHH------HHHHHHHHHHHHHHHHHHHHHHHHHHHEEEE---EEEEE----E----HHHH---------HHHHHHHHHHHHHHH-------HHHHHHHHHHH-------HHHHHHHH----E-------HHHHHHHHHHHHHHHH--------HHHH-----HHHHHHHHHHHHHHHHH----'
 
 	ranges = make_ranges(foo)
+	
+	tmp = ["*" for i in range(len(foo))]
+	for start,stop,letter in ranges:
+		if letter == "C":
+			letter = "-"
+		#Make sure that ranges do not overlap, and that every residue is covered in one range. Once and only once.
+		assert all([i == '*' for i in tmp[start:stop+1]]), "Some residue was in multiple ranges!"
+		for i in range(start,stop+1):
+			tmp[i] = letter
+	
+	reconstituted = ''.join(tmp)
+
 	print foo
+	print reconstituted
 	print ranges
+
+	assert foo == reconstituted, "Original and Reconstituted SS strings do not match."
