@@ -23,7 +23,7 @@
    the entries below and incrementing the file number *}
 
 {* protein sequence file *}
-{===>} prot_sequence_infile_1="amy_start.seq";
+{===>} prot_sequence_infile_1="my.seq";
 {* segid *}
 {===>} prot_segid_1="";
 {* start residue numbering at *}
@@ -62,7 +62,7 @@
 {============================= output files ================================}
 
 {* output structure file *}
-{===>} structure_outfile="generate_seq.mtf";
+{===>} structure_outfile="mtf.mtf";
 
 {=========================== disulphide bonds ==============================}
 

@@ -13,7 +13,7 @@
 {======================= molecular structure =========================}
 
 {* structure file(s) *}
-{===>} structure_file="il8.mtf";
+{===>} structure_file="my.mtf";
 
 {* parameter file(s) *}
 {===>} par_1="CNS_TOPPAR:protein-allhdg.param";
@@ -25,12 +25,12 @@
 {======================= input parameters ============================}
 
 {* maximum number of trials to generate an acceptable structure *}
-{===>} max_trial=10;
+{===>} max_trial=20;
 
 {=========================== output files ============================}
 
 {* output coordinates *}
-{===>} output_coor="il8_extended.pdb";
+{===>} output_coor="my_extended.pdb";
                                   
 {===========================================================================}
 {        things below this line do not normally need to be changed          }
