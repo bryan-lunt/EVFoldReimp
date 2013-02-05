@@ -1,3 +1,22 @@
+"""
+These functions and constants are for creating distance and dihedral constraints based on secondary structure for an EVFold reimplementaion.
+
+The original paper doesn't spell everything out, even in the supplementary material. Specifically, the dihedral angles had to be reverse engineered from the output files provided by the EVFold authors.
+
+@author: lunt@ctbp.ucsd.edu
+
+
+
+www.evfold.org
+
+Marks, Debora S, Thomas a Hopf, and Chris Sander. "Protein Structure Prediction from Sequence Variation." Nature Biotechnology 30, no. 11 (November 8, 2012): 1072-1080. http://www.nature.com/doifinder/10.1038/nbt.2419.
+
+Hopf, Thomas A., Lucy J. Colwell, Robert Sheridan, Burkhard Rost, Chris Sander, and Debora S. Marks. "Three-Dimensional Structures of Membrane Proteins from Genomic Sequencing." Cell (May 2012): 
+1-15. http://linkinghub.elsevier.com/retrieve/pii/S0092867412005090.
+
+
+"""
+
 SSDistanceStr = 'assign (resid {0} and name {2:s})  (resid {1} and name {3:s})  {4:.1f} {5:.1f} {6:.1f} weight {7:.5f}\n'
 
 helixConstraints = [
@@ -40,28 +59,28 @@ def make_SS_dists(start,length,type='H',weight=5.0):
 	return retstr
 
 
-AlphaDihedralStr = """assign (resid {0} and name c) (resid {1} and name n) (resid {1} and name ca) (resid {1} and name c)  5.0 -57.0 7.0 2
-assign (resid {0} and name n) (resid {0} and name ca) (resid {0} and name c) (resid {1} and name n)  5.0 -47.0 7.0 2
-"""
+#TODO : Figure out about dihedral angles in CNS, is the last argument a float or an int? shouldnt it be the weight or something? (It seems to be an int in the paper...)
 
-def make_helix_dihedral(start,length):
+#dihedralStrs = ["assign (resid {0} and name c) (resid {1} and name n) (resid {1} and name ca) (resid {1} and name c)  {2:.1f} {3:.1f} {4:.1f} {5:.1f}\n",
+#		"assign (resid {0} and name n) (resid {0} and name ca) (resid {0} and name c) (resid {1} and name n)  {2:.1f} {3:.1f} {4:.1f} {5:.1f}\n"]
+
+dihedralStrs = ["assign (resid {0} and name c) (resid {1} and name n) (resid {1} and name ca) (resid {1} and name c)  {2:.1f} {3:.1f} {4:.1f} {5:.0f}\n",
+		"assign (resid {0} and name n) (resid {0} and name ca) (resid {0} and name c) (resid {1} and name n)  {2:.1f} {3:.1f} {4:.1f} {5:.0f}\n"]
+
+alphaDihedrals = [(5.0,-57.0,7.0,2),(5.0, -47.0, 7.0, 2)]
+betaDihedrals  = [(5.0,-120.0,7.0,2),(5.0,120.0,7.0,2)]
+loopDihedrals = []
+
+secondaryAngleDict = {'H':alphaDihedrals, 'E':betaDihedrals, 'C':loopDihedrals } 
+
+def make_SS_angles(start,length,type="H",weight=2.0):
 	retstr = ""
 
 	for i in range(start,start+length):
-		retstr += AlphaDihedralStr.format(i,i+1)
-	return retstr
-
-BetaDihedralStr = """assign (resid {0} and name c) (resid {1} and name n) (resid {1} and name ca) (resid {1} and name c)  5.0 -120.0 7.0 2
-assign (resid {0} and name n) (resid {0} and name ca) (resid {0} and name c) (resid {1} and name n)  5.0 120.0 7.0 2
-"""
-
-def make_strand_dihedral(start,length):
-	retstr = ""
-
-	for i in range(start,start+length):
-		retstr += BetaDihedralStr.format(i,i+1)
+		for oneDihedralStr,theAngles in zip(dihedralStrs,secondaryAngleDict[type]):
+			retstr += oneDihedralStr.format(*((i,i+1) + theAngles))
+	
 	return retstr
 
 if __name__ == "__main__":
 	#TODO : Put some unit tests here.
-	print make_helix_dihedral(1,5)
