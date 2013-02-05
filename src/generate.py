@@ -43,8 +43,7 @@ OUTSEQ.close()
 
 #make SS constraints from HMMTOP/JNET
 #TODO: Commandline option to use HMMTOP/JNET or autodetect...
-SSfile = open(SSPREDFILE)
-SS_map = make_ranges(read_jnet(SSfile))
+SS_map = make_ranges(read_jnet(SSPREDFILE))
 
 
 #actually make SS constraints
@@ -82,7 +81,7 @@ nonZ = DI_Matrix.nonzero()
 
 OUTCONS = open(OUTCON_FILENAME,'w')
 for i,j,number in izip(nonZ[0],nonZ[1],count(1)):
-	k = DI_matrix[i,j]
+	k = DI_Matrix[i,j]
 	OUTCONS.write(constraintstr % (i+1,j+1, 4.0, 4.0, 3.0, 10.0/number))
 OUTCONS.close()
 
