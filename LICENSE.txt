@@ -1,0 +1,2 @@
+The license for this code (as far as what is written by Bryan Lunt) is not yet decided.
+You may copy and experiment with it, contact the author before redistributing or publishing.

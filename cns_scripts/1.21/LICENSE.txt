@@ -1,0 +1,3 @@
+The code in this directory is copied from http://evfold.org/evfold/download/StructureFromSequences_Appendix_A2.tar.gz
+
+Their license applies.
