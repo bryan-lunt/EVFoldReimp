@@ -5,9 +5,9 @@ import scipy as S
 import sys
 from itertools import izip, count, groupby
 
+import consensus
+
 import Bio.SeqIO
-import Bio.AlignIO
-from Bio.Align import AlignInfo
 import Bio.PDB.Polypeptide as PP
 
 from SS_const import *
@@ -29,7 +29,7 @@ def fastaToCNSThreeLetter(seqRecord,width=10):
 	
 
 
-def generateDIMask(theDIs, theAlign, sStruct, k=6,consthresh=0.95):
+def generateDIMask(theDIs, cons, sStruct, k=6,consthresh=0.95,ambigChar='X'):
 	L,M = theDIs.shape
 	assert L == M , "Non square DI matrix!?"
 	DImask = S.ones(theDIs.shape)
@@ -42,27 +42,16 @@ def generateDIMask(theDIs, theAlign, sStruct, k=6,consthresh=0.95):
 	#
 	#2 Conservation Filter
 	#
-	myInfo = AlignInfo.SummaryInfo(theAlign)
-	cons = myInfo.gap_consensus(threshold = consthresh,ambiguous='X')
-	#Scan the consensus sequence and find overly conserved columns, note those, and note conserved cystein columns
-	conservedSites = S.zeros(L)
-	conservedCysteine = S.zeros(L)
-	for i in range(L):
-		res = cons.seq[i]
-		if res is not "X":
-			if res is "C":
-				conservedCysteine[i] = 1.0
-			else:
-				conservedSites[i] = 1.0
+	#Scan the consensus sequence and find overly conserved columns, note those, and note conserved cysteine columns
+	conservedSites = S.array([i != ambigChar for i in cons],dtype=S.int8)
+	conservedCysteine = S.array([i == 'C' for i in cons],dtype=S.int8)
 	
-	allConservation = conservedSites + conservedCysteine
-	
-	DImask = allConservation.reshape(-1,1)*(DImask*allConservation)
-	
+	DImask = (1-conservedSites).reshape(-1,1)*(DImask*(1-conservedSites))
 	
 	#
 	#3 Cysteine columns may be strongly conserved, but only allow their best contact.
 	#TODO : implement this later.
+	
 	
 	#
 	#4 Secondary Structure Masking
@@ -97,17 +86,30 @@ def main():
 	INSEQ = open(sys.argv[1])
 	DI_Matrix = loadDI(sys.argv[2])
 	SSPREDFILE = open(sys.argv[3])
+	INALIGN = open(sys.argv[4])
+	
+	WeightThresh = 0.7
+	ConsensusThresh = 0.95
 	
 	OUTSEQ_FILENAME = 'my.seq'
 	OUTSS_FILENAME = 'my_SS.tbl'
 	OUTSSA_FILENAME = 'my_SS_angle.tbl'
 	OUTCON_FILENAME = 'my.tbl'
+	#
+	#General Input
+	#
+	seq = Bio.SeqIO.read(INSEQ,'fasta')
+	align = consensus.weightedLoad(INALIGN,WeightThresh) #TODO : weighted input!
+	cons = consensus.consensus(align,ConsensusThresh)
+	#read SS from HMMTOP/JNET
+	#TODO: Commandline option to use HMMTOP/JNET or autodetect...
+	SS_map = make_ranges(read_jnet(SSPREDFILE))
+	
+	
+	
 	
 	#convert the FASTA sequence to input for CNS
-	seq = Bio.SeqIO.read(INSEQ,'fasta')
-	
 	outSequence = fastaToCNSThreeLetter(seq)
-	
 	OUTSEQ = open(OUTSEQ_FILENAME,'w')
 	OUTSEQ.write(outSequence)
 	OUTSEQ.close()
@@ -115,9 +117,7 @@ def main():
 
 	
 	
-	#make SS constraints from HMMTOP/JNET
-	#TODO: Commandline option to use HMMTOP/JNET or autodetect...
-	SS_map = make_ranges(read_jnet(SSPREDFILE))
+
 	
 	
 	#actually make SS constraints
@@ -126,24 +126,23 @@ def main():
 	
 	for Hstart, Hend, type in SS_map:
 		thisTM_dists = make_SS_dists(Hstart+1,Hend-Hstart+1,type=type)
-		thisDihedral = make_SS_angles(Hstart+1,Hend-Hstart+1,type=type)
-	
 		OUTSS.write(thisTM_dists)
+		
+		thisDihedral = make_SS_angles(Hstart+1,Hend-Hstart+1,type=type)
 		OUTSSA.write(thisDihedral)
 	
 	OUTSS.close()
 	OUTSSA.close()
 	
+	
+	
 	#use SS map to mask DI constraints
-	mask = generateDIMask(DI_Matrix,None,SS_map)
-
+	mask = generateDIMask(DI_Matrix,cons,SS_map)
+	print "%i positions survived masking." % mask.sum()
+	DI_Matrix = S.multiply(DI_Matrix,mask)
 	
 	
 	#make DI constraints
-	#TODO: Break this out into its own function, as it is starting to get complex.
-	#TODO: See the paper supplementary text page 9, we need a conservation filter, that allows disulphide bonds despite high conservation, but only allows zero or one disulphide bonds per column
-	
-	
 	#TODO: We also need a constraint between CB in pairs that do not contain glycine.
 	constraintstr = 'assign (resid %i and name CA)  (resid %i and name CA)  %.1f %.1f %.1f weight %.5f\n'
 	nonZ = DI_Matrix.nonzero()
