@@ -116,7 +116,8 @@ def main():
 	cons = consensus.consensus(align,ConsensusThresh)
 	#read SS from HMMTOP/JNET
 	#TODO: Commandline option to use HMMTOP/JNET or autodetect...
-	SS_map = make_ranges(read_jnet(SSPREDFILE))
+	SS_seq = read_jnet(SSPREDFILE)
+	SS_map = make_ranges(SS_seq)
 	
 	
 	
