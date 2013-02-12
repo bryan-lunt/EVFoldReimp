@@ -10,6 +10,7 @@ import consensus
 import Bio.SeqIO
 import Bio.PDB.Polypeptide as PP
 
+from contact_const import *
 from SS_const import *
 from loadDI import *
 from readSS import *
@@ -50,7 +51,7 @@ def generateDIMask(theDIs, cons, sStruct, k=6,consthresh=0.95,ambigChar='X'):
 	
 	#
 	#3 Cysteine columns may be strongly conserved, but only allow their best contact.
-	#TODO : implement this later.
+	#TODO : implement Cysteine Best-Friend pairs
 	
 	
 	#
@@ -80,7 +81,7 @@ def generateDIMask(theDIs, cons, sStruct, k=6,consthresh=0.95,ambigChar='X'):
 	
 	return DImask
 	
-
+#TODO : make a nicer command-line interface with options.
 def main():
 	#list input files
 	INSEQ = open(sys.argv[1])
@@ -90,6 +91,7 @@ def main():
 	
 	WeightThresh = 0.7
 	ConsensusThresh = 0.95
+	NumPairs = 100 #TODO: Calculate this from L, the length of the sequence
 	
 	OUTSEQ_FILENAME = 'my.seq'
 	OUTSS_FILENAME = 'my_SS.tbl'
@@ -99,7 +101,7 @@ def main():
 	#General Input
 	#
 	seq = Bio.SeqIO.read(INSEQ,'fasta')
-	align = consensus.weightedLoad(INALIGN,WeightThresh) #TODO : weighted input!
+	align = consensus.weightedLoad(INALIGN,WeightThresh)
 	cons = consensus.consensus(align,ConsensusThresh)
 	#read SS from HMMTOP/JNET
 	#TODO: Commandline option to use HMMTOP/JNET or autodetect...
@@ -116,8 +118,6 @@ def main():
 	#end convert
 
 	
-	
-
 	
 	
 	#actually make SS constraints
@@ -139,18 +139,19 @@ def main():
 	#use SS map to mask DI constraints
 	mask = generateDIMask(DI_Matrix,cons,SS_map)
 	print "%i positions survived masking." % mask.sum()
-	DI_Matrix = S.multiply(DI_Matrix,mask)
+	DI_Matrix = S.multiply(DI_Matrix,mask)#Hadamard Product!
 	
+	M,L = DI_Matrix.shape
+	assert M == L, 'DI matrix not square!?'
+	DI_Ravel = DI_Matrix.ravel()
 	
-	#make DI constraints
-	#TODO: We also need a constraint between CB in pairs that do not contain glycine.
-	constraintstr = 'assign (resid %i and name CA)  (resid %i and name CA)  %.1f %.1f %.1f weight %.5f\n'
-	nonZ = DI_Matrix.nonzero()
+	topIndeces = DI_Ravel.argsort()[-1:0:-1][:NumPairs]
+	topPositions = S.array([(i/L,i%L) for i in topIndeces],dtype=int)
+	
+	pair_constraints = make_EVFold_contacts(topPositions,seq.seq.tostring())
 	
 	OUTCONS = open(OUTCON_FILENAME,'w')
-	for i,j,number in izip(nonZ[0],nonZ[1],count(1)):
-		k = DI_Matrix[i,j]
-		OUTCONS.write(constraintstr % (i+1,j+1, 4.0, 4.0, 3.0, 10.0/number))
+	OUTCONS.write(pair_constraints)
 	OUTCONS.close()
 
 if __name__ == "__main__":
