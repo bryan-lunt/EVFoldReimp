@@ -81,17 +81,28 @@ def generateDIMask(theDIs, cons, sStruct, k=6,consthresh=0.95,ambigChar='X'):
 	
 	return DImask
 	
-#TODO : make a nicer command-line interface with options.
+
+from optparse import OptionParser
 def main():
-	#list input files
-	INSEQ = open(sys.argv[1])
-	DI_Matrix = loadDI(sys.argv[2])
-	SSPREDFILE = open(sys.argv[3])
-	INALIGN = open(sys.argv[4])
+	parser = OptionParser(usage='usage: %prog [options] <SingleSequence.faa> <DI file> <SS Prediction> <SIMformat Alignment>')
 	
-	WeightThresh = 0.7
-	ConsensusThresh = 0.95
-	NumPairs = 100 #TODO: Calculate this from L, the length of the sequence
+	parser.add_option("--wt","--weight-thresh",dest="weightthresh",help="The weighting threshold to use if using reweighting.",default=0.7,type="float",metavar="FLOAT")
+	parser.add_option("--ct","--consensus-thresh",dest="consthresh",help="The conservation threshold at which DI pairs for that column are ignored (unless cysteine)",default=0.95,type="float",metavar="FLOAT")
+	parser.add_option("-n","--number",dest='numpairs',help='The number of pairs to take',type='int',default=None)
+	parser.add_option('-f','--fract',dest='fraction',help='The number of pairs will be Fract*L where Fract is this option and L is the length of the sequence',type='float',default=0.2)
+	
+	options, args = parser.parse_args()
+	
+	#list input files
+	INSEQ = open(args[0])
+	DI_Matrix = loadDI(args[1])
+	M,L = DI_Matrix.shape
+	SSPREDFILE = open(args[2])
+	INALIGN = open(args[3])
+	
+	WeightThresh = options.weightthresh
+	ConsensusThresh = options.consthresh
+	NumPairs = options.numpairs if options.numpairs is not None else int(round(options.fraction*L)) #TODO: Calculate this from L, the length of the sequence
 	
 	OUTSEQ_FILENAME = 'my.seq'
 	OUTSS_FILENAME = 'my_SS.tbl'
@@ -144,6 +155,8 @@ def main():
 	M,L = DI_Matrix.shape
 	assert M == L, 'DI matrix not square!?'
 	DI_Ravel = DI_Matrix.ravel()
+	
+	print "Taking %i pairs" % NumPairs
 	
 	topIndeces = DI_Ravel.argsort()[-1:0:-1][:NumPairs]
 	topPositions = S.array([(i/L,i%L) for i in topIndeces],dtype=int)
