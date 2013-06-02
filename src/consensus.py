@@ -27,18 +27,20 @@ alphIndex['B'] = alphIndex['-']
 def intConv(aString):
 	return [alphIndex[i] for i in aString.strip()]
 
-def weightedLoad(infile,weightthresh=0.7):
+def weightedLoad(infile,weightthresh=None):
 	
 	myAlign = simformat.read(infile)
 	myHeader = myAlign.header
 	
-	try:
-		weightsindex = myHeader.cutoffs.index(weightthresh)
-	except:
-		raise Exception("No such weighting cutoff, valid cutoffs are: " + repr(myHeader.cutoffs))
-	
-	simformat.annotateAlignment(myAlign)
-	weights = S.array(simformat.getinvnormsim(myAlign,weightsindex))
+	if weightthresh is not None:
+		try:
+			weightsindex = myHeader.cutoffs.index(weightthresh)
+		except:
+			raise Exception("No such weighting cutoff, valid cutoffs are: " + repr(myHeader.cutoffs))
+		simformat.annotateAlignment(myAlign)
+		weights = S.array(simformat.getinvnormsim(myAlign,weightsindex))
+	else:
+		weights = S.ones(len(myAlign))
 	
 	N = len(myAlign)
 	Width = len(myAlign[0])

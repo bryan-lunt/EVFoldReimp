@@ -86,6 +86,7 @@ from optparse import OptionParser
 def main():
 	parser = OptionParser(usage='usage: %prog [options] <SingleSequence.faa> <DI file> <SS Prediction> <SIMformat Alignment>')
 	
+	parser.add_option("--nw",dest="noweight",help="For debugging, don't use this",default=False,action='store_true')
 	parser.add_option("--wt","--weight-thresh",dest="weightthresh",help="The weighting threshold to use if using reweighting.",default=0.7,type="float",metavar="FLOAT")
 	parser.add_option("--ct","--consensus-thresh",dest="consthresh",help="The conservation threshold at which DI pairs for that column are ignored (unless cysteine)",default=0.95,type="float",metavar="FLOAT")
 	parser.add_option("-n","--number",dest='numpairs',help='The number of pairs to take',type='int',default=None)
@@ -100,7 +101,7 @@ def main():
 	SSPREDFILE = open(args[2])
 	INALIGN = open(args[3])
 	
-	WeightThresh = options.weightthresh
+	WeightThresh = options.weightthresh if not options.noweight else None
 	ConsensusThresh = options.consthresh
 	NumPairs = options.numpairs if options.numpairs is not None else int(round(options.fraction*L)) #TODO: Calculate this from L, the length of the sequence
 	
