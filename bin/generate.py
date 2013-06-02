@@ -151,7 +151,7 @@ def main():
 	
 	#use SS map to mask DI constraints
 	mask = generateDIMask(DI_Matrix,cons,SS_map)
-	print "%i positions survived masking." % mask.sum()
+	print "%i couplets survived masking." % mask.sum()
 	DI_Matrix = S.multiply(DI_Matrix,mask)#Hadamard Product!
 	
 	M,L = DI_Matrix.shape
