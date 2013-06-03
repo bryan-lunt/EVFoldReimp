@@ -48,7 +48,7 @@ def weightedLoad(infile,weightthresh=None):
 	Matrix = sp.lil_matrix((N,Q*Width)) #LiL is better to populate, csc might be even better, but we'd have to write more complex code.
 	
 	for seqRec,one_weight,i in izip(myAlign,weights,count()):
-		seq_as_ints = intConv(seqRec.seq)
+		seq_as_ints = intConv(seqRec.seq.tostring())
 		for residue,j in izip(seq_as_ints,count()):
 			Matrix[i,j*Q + residue] = one_weight
 

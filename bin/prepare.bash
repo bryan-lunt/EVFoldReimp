@@ -9,7 +9,7 @@
 #Mostly, It wraps a python script.
 #
 
-SCRIPTDIR=`readlink -f $0`
+SCRIPTDIR=`dirname $0`
 
 CNSVERSION='1.3'
 
@@ -53,6 +53,7 @@ jnet -z single.faa > secondary.ss
 
 ####
 #Generate constraints
+echo "Generating Constraints"
 ${SCRIPTDIR}/generate.py single.faa couplings.DI secondary.ss alignment.sim
 #
 #Now, we must have the following files:
@@ -64,7 +65,9 @@ ${SCRIPTDIR}/generate.py single.faa couplings.DI secondary.ss alignment.sim
 
 ####
 #Generate an extended PDB file
+echo "Generating Sequence file."
 cns_solve < ${CNSSCRIPTS}/generate_seq.inp > ${SCRIPTOUTDIR}/generate_seq.out
+echo "Generating extended PDB file."
 cns_solve < ${CNSSCRIPTS}/generate_extended.inp > ${SCRIPTOUTDIR}/generate_extended.out
 
 
