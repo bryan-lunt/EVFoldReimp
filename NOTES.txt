@@ -1,0 +1,5 @@
+jnet doesn't like gap characters, at least not for a single protein. It seems to tolerate "X" (and other ambiguous characters?)
+
+the script to make a .seq file also doesn't like gap characters. Replace with "G"? (Generally, you should make the columns of your alignment correspond to residues of the structure you want.)
+
+Call a CNS script by using "applyCNSsettings.bash" to the script, then pipe that to cns_solve.
