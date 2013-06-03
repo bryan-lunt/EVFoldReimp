@@ -17,7 +17,7 @@
 {======================= molecular structure =========================}
 
 {* structure file *}
-{===>} structure_infile="PF00071_P01112_90_1_h.mtf";
+{===>} structure_infile="BLUNT_GEN_SEQ_OUTFILE";
 
 {* parameter files *}
 {===>} parameter_infile_1="CNS_TOPPAR:protein.param";
@@ -27,7 +27,7 @@
 {===>} parameter_infile_5="";
 
 {* coordinate file *}
-{===>} coordinate_infile="PF00071_P01112_90_1_h.pdb";
+{===>} coordinate_infile="BLUNT_GEN_EXT_OUTFILE";
 
 {===================== crystallographic symmetry =====================}
 
@@ -103,7 +103,7 @@
 {=========================== output files ============================}
 
 {* output coordinate file *}
-{===>} coordinate_outfile="PF00071_P01112_90_1_hMIN.pdb";
+{===>} coordinate_outfile="BLUNT_MIN_BASE";
 
 {===========================================================================}
 {        things below this line do not normally need to be changed          }

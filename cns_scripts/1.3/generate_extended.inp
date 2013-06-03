@@ -13,7 +13,7 @@
 {======================= molecular structure =========================}
 
 {* structure file(s) *}
-{===>} structure_file="my.mtf";
+{===>} structure_file="BLUNT_GEN_SEQ_OUTFILE";
 
 {* parameter file(s) *}
 {===>} par_1="CNS_TOPPAR:protein-allhdg5-4.param";
@@ -30,7 +30,7 @@
 {=========================== output files ============================}
 
 {* output coordinates *}
-{===>} output_coor="my_extended.pdb";
+{===>} output_coor="BLUNT_GEN_EXT_OUTFILE";
                                   
 {===========================================================================}
 {        things below this line do not normally need to be changed          }

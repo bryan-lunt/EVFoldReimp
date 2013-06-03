@@ -23,7 +23,7 @@
    the entries below and incrementing the file number *}
 
 {* protein sequence file *}
-{===>} prot_sequence_infile_1="my.seq";
+{===>} prot_sequence_infile_1="BLUNT_GEN_SEQ_INFILE";
 {* segid *}
 {===>} prot_segid_1="";
 {* start residue numbering at *}
@@ -62,7 +62,7 @@
 {============================= output files ================================}
 
 {* output structure file *}
-{===>} structure_outfile="mtf.mtf";
+{===>} structure_outfile="BLUNT_GEN_SEQ_OUTFILE";
 
 {=========================== disulphide bonds ==============================}
 

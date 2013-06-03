@@ -37,7 +37,7 @@
 {=========================== coordinate files =============================}
 
 {* coordinate file *}
-{===>} coordinate_infile="PF00071_P01112_90_1.pdb";
+{===>} coordinate_infile="BLUNT_GEN_EXT_OUTFILE";
 
 {* convert chainid to segid if chainid is non-blank *}
 {+ choice: true false +}
@@ -134,10 +134,10 @@
 {============================= output files ================================}
 
 {* output structure file *}
-{===>} structure_outfile="PF00071_P01112_90_1_h.mtf";
+{===>} structure_outfile="BLUNT_GEN_SEQ_OUTFILE";
 
 {* output coordinate file *}
-{===>} coordinate_outfile="PF00071_P01112_90_1_h.pdb";
+{===>} coordinate_outfile="BLUNT_ANNEAL_BASE";
 
 {* format output coordinates for use in o *}
 {* if false then the default CNS output coordinate format will be used *}

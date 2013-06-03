@@ -72,14 +72,14 @@
 {===>} par.5="";
 
 {* structure file(s) *}
-{===>} struct.1="my.mtf";
+{===>} struct.1="BLUNT_GEN_SEQ_OUTFILE";
 {===>} struct.2="";
 {===>} struct.3="";
 {===>} struct.4="";
 {===>} struct.5="";
 
 {* input coordinate file(s) *}
-{===>} pdb.in.file.1="my_extended.pdb";
+{===>} pdb.in.file.1="BLUNT_GEN_EXT_OUTFILE";
 {===>} pdb.in.file.2="";
 {===>} pdb.in.file.3="";
 
@@ -118,7 +118,7 @@
 {+ choice: "trial" "accept" +}
 {===>} flg.trial.struc="trial";
 {* number of trial or accepted structures *}
-{===>} pdb.end.count=5;
+{===>} pdb.end.count=BLUNT_EMBED_HOWMANY_PER_TASK;
 
 {* print accepted structures *}
 {+ choice: true false +}
@@ -238,9 +238,9 @@
 {* NOE distance restraints files. *}
 
 {* restraint set 1 file *}
-{===>} nmr.noe.file.1="my.tbl";
+{===>} nmr.noe.file.1="BLUNT_CONSTRAINTS_TABLE";
 {* restraint set 2 file *}
-{===>} nmr.noe.file.2="my_SS.tbl";
+{===>} nmr.noe.file.2="BLUNT_SS_CONSTRAINTS_TABLE";
 {* restraint set 3 file *}
 {===>} nmr.noe.file.3="";
 {* restraint set 4 file *}
@@ -461,7 +461,7 @@
 {* dihedral angle restraints file *}
 {* Note: the restraint file MUST NOT contain restraints 
          dihedral or end *}
-{===>} nmr.cdih.file="my_SS_angle.tbl";
+{===>} nmr.cdih.file="BLUNT_SS_ANGLES_TABLE";
 
 {* DNA-RNA base planarity restraints file *}
 {* Note: include weights as $pscale in the restraint file *}
@@ -480,7 +480,7 @@
 {===>} pdb.in.name="";
 
 {* base name for output coordinate files *}
-{===>} pdb.out.name="my_dg";
+{===>} pdb.out.name="BLUNT_EMBEDDED_ANNEALED_BASE";
 
 {===========================================================================}
 {         things below this line do not normally need to be changed         }
